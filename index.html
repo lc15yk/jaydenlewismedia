@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JaydenLewis Media — Meta Ads & AI Automations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080808;
+            --text: #ffffff;
+            --muted: #777777;
+            --border: rgba(255,255,255,0.07);
+            --card: rgba(255,255,255,0.03);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ── LAVA LAMP CANVAS ── */
+        #canvas-wrap {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            filter: blur(80px) contrast(5);
+            opacity: 0.18;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* vignette — dark edges, open centre, adds depth */
+        #vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(
+                ellipse 75% 70% at 50% 50%,
+                transparent 0%,
+                rgba(0,0,0,0.35) 60%,
+                rgba(0,0,0,0.82) 100%
+            );
+        }
+
+        .wrap { position: relative; z-index: 1; }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 56px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(8,8,8,0.7);
+            backdrop-filter: blur(16px);
+        }
+
+        .logo {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo em {
+            font-style: normal;
+            color: #aaa;
+            font-weight: 400;
+        }
+
+        .nav-cta {
+            background: #fff;
+            color: #080808;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .nav-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 140px 40px 80px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            padding: 7px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 36px;
+            backdrop-filter: blur(8px);
+        }
+
+        .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: blink 2.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        h1 {
+            font-size: clamp(52px, 9vw, 104px);
+            font-weight: 900;
+            letter-spacing: -4px;
+            line-height: 0.95;
+            margin-bottom: 28px;
+        }
+
+        h1 .dim { color: #555; }
+
+        .hero-p {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 460px;
+            line-height: 1.65;
+            margin-bottom: 48px;
+        }
+
+        .btns {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-white {
+            background: #fff;
+            color: #080808;
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .btn-white:hover { opacity: 0.88; transform: translateY(-2px); }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.18); }
+
+        /* ── SERVICES ── */
+        .services {
+            padding: 120px 56px;
+            max-width: 1160px;
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .section-h {
+            font-size: clamp(34px, 5vw, 58px);
+            font-weight: 900;
+            letter-spacing: -2.5px;
+            line-height: 1.05;
+            margin-bottom: 64px;
+            max-width: 540px;
+        }
+
+        .section-h .dim { color: #555; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 40px;
+            transition: border-color 0.3s, transform 0.3s;
+            backdrop-filter: blur(12px);
+        }
+
+        .card:hover {
+            border-color: rgba(255,255,255,0.13);
+            transform: translateY(-5px);
+        }
+
+        .icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 28px;
+        }
+
+        .icon-b { background: rgba(24,119,242,0.12); }
+        .icon-p { background: rgba(139,92,246,0.12); }
+
+        .card h3 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 14px;
+        }
+
+        .card p {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.65;
+        }
+
+        /* ── DIVIDER STRIP ── */
+        .strip {
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 64px 56px;
+        }
+
+        .strip-inner {
+            max-width: 700px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 48px 60px;
+            text-align: center;
+        }
+
+        .stat-n {
+            font-size: 52px;
+            font-weight: 900;
+            letter-spacing: -3px;
+            margin-bottom: 6px;
+        }
+
+        .stat-l { color: var(--muted); font-size: 14px; }
+
+        /* ── CONTACT ── */
+        .contact {
+            padding: 120px 40px;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: clamp(38px, 6vw, 68px);
+            font-weight: 900;
+            letter-spacing: -3px;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+
+        .contact h2 .dim { color: #666; }
+
+        .contact > p {
+            color: var(--muted);
+            font-size: 17px;
+            margin-bottom: 48px;
+            line-height: 1.6;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            text-align: left;
+        }
+
+        form input, form textarea {
+            background: rgba(0,0,0,0.75);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: #fff;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+            resize: none;
+            width: 100%;
+            backdrop-filter: blur(8px);
+        }
+
+        form input:focus, form textarea:focus {
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        form input::placeholder, form textarea::placeholder {
+            color: #666;
+        }
+
+        form button {
+            background: #fff;
+            color: #080808;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.2s, transform 0.15s;
+            letter-spacing: -0.2px;
+        }
+
+        form button:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 28px 56px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        footer span { color: var(--muted); font-size: 14px; }
+
+        /* ── FADE IN ── */
+        .fi {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.75s ease, transform 0.75s ease;
+        }
+
+        .fi.on { opacity: 1; transform: translateY(0); }
+
+        .fi-d1 { transition-delay: 0.1s; }
+        .fi-d2 { transition-delay: 0.2s; }
+        .fi-d3 { transition-delay: 0.3s; }
+
+        @media (max-width: 700px) {
+            nav { padding: 16px 20px; }
+            nav .logo { font-size: 15px; }
+            .nav-cta { padding: 8px 16px; font-size: 13px; }
+
+            .hero { padding: 120px 24px 60px; }
+            h1 {
+                font-size: clamp(40px, 11vw, 64px);
+                letter-spacing: -2px;
+                line-height: 1;
+            }
+            .hero-p { font-size: 16px; }
+
+            .services { padding: 80px 24px; }
+            .section-h { font-size: clamp(28px, 7vw, 40px); letter-spacing: -1.5px; margin-bottom: 40px; }
+            .grid { grid-template-columns: 1fr; }
+            .card { padding: 28px; }
+
+            .strip { padding: 48px 24px; }
+            .strip-inner {
+                grid-template-columns: 1fr 1fr;
+                gap: 28px;
+            }
+            .stat-n { font-size: 40px; letter-spacing: -2px; }
+
+            .contact { padding: 80px 24px; }
+            .contact h2 { font-size: clamp(32px, 8vw, 48px); letter-spacing: -2px; }
+
+            footer { padding: 24px 20px; flex-direction: column; text-align: center; gap: 6px; }
+
+            /* hide cursor glow on touch devices */
+            #cursor-glow { display: none; }
+        }
+
+        /* ── CURSOR GLOW ── */
+        #cursor-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(255,255,255,0.055) 0%, transparent 70%);
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+
+        /* ── FILM GRAIN ── */
+        #grain {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0.032;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 200px 200px;
+        }
+
+        /* ── SHIMMER ON H1 ── */
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        h1 .shimmer {
+            background: linear-gradient(90deg, #fff 0%, #fff 40%, #aaa 50%, #fff 60%, #fff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s linear infinite;
+        }
+
+        /* ── ANIMATED BORDER BUTTON ── */
+        .btn-glow-wrap {
+            position: relative;
+            border-radius: 10px;
+            padding: 2px;
+            background: conic-gradient(from var(--angle, 0deg), transparent 20%, rgba(255,255,255,0.6) 50%, transparent 80%);
+            animation: spin-border 3s linear infinite;
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes spin-border {
+            to { --angle: 360deg; }
+        }
+
+        .btn-glow-wrap .btn-white {
+            display: block;
+            background: #fff;
+            border-radius: 8px;
+            margin: 0;
+        }
+
+        /* ── SCROLL PROGRESS BAR ── */
+        #progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            width: 0%;
+            background: rgba(255,255,255,0.5);
+            z-index: 200;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+
+<div id="canvas-wrap"><canvas id="canvas"></canvas></div>
+<div id="vignette"></div>
+<div id="grain"></div>
+<div id="cursor-glow"></div>
+<div id="progress"></div>
+
+<div class="wrap">
+
+    <!-- NAV -->
+    <nav>
+        <div class="logo">JaydenLewis <em>Media</em></div>
+        <a href="#contact" class="nav-cta">Get in touch</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="pill fi">
+            <span class="dot"></span>
+            Now taking on new clients
+        </div>
+        <h1 class="fi fi-d1">
+            <span class="shimmer">Ads that sell.</span><br>
+            <span class="dim">Systems that scale.</span>
+        </h1>
+        <p class="hero-p fi fi-d2">
+            We run Meta Ads and build AI automations for ecommerce brands ready to grow fast.
+        </p>
+        <div class="btns fi fi-d3">
+            <div class="btn-glow-wrap"><a href="#contact" class="btn-white">Work with us</a></div>
+            <a href="#services" class="btn-ghost">See what we do</a>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services" id="services">
+        <div class="fi">
+            <div class="eyebrow">What we do</div>
+            <h2 class="section-h">Built to grow <span class="dim">your brand.</span></h2>
+        </div>
+        <div class="grid">
+            <div class="card fi fi-d1">
+                <div class="icon icon-b">📈</div>
+                <h3>Meta Ads</h3>
+                <p>Facebook and Instagram campaigns built to convert. We handle strategy, creative direction, and full campaign management so you can focus on your business.</p>
+            </div>
+            <div class="card fi fi-d2">
+                <div class="icon icon-p">🤖</div>
+                <h3>AI Automations</h3>
+                <p>Smart systems that run 24/7 without you. Automated outreach, lead follow-ups, reporting, and more, all connected and working while you sleep.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS STRIP -->
+    <div class="strip">
+        <div class="strip-inner">
+            <div class="fi">
+                <div class="stat-n" data-prefix="£" data-target="0">£0</div>
+                <div class="stat-l">Wasted on guesswork</div>
+            </div>
+            <div class="fi fi-d1">
+                <div class="stat-n" data-suffix="h" data-target="48">48h</div>
+                <div class="stat-l">To go live</div>
+            </div>
+            <div class="fi fi-d2">
+                <div class="stat-n" data-suffix="%" data-target="100">100%</div>
+                <div class="stat-l">Focused on results</div>
+            </div>
+            <div class="fi fi-d3">
+                <div class="stat-n" data-suffix="★" data-target="5">5★</div>
+                <div class="stat-l">Client satisfaction</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+        <h2 class="fi">Ready to <span class="dim">scale?</span></h2>
+        <p class="fi fi-d1">Tell us about your brand and we'll get back to you within 24 hours.</p>
+        <form class="fi fi-d2" onsubmit="handleSubmit(event)">
+            <input type="text" name="name" placeholder="Your name" required />
+            <input type="email" name="email" placeholder="Email address" required />
+            <input type="text" name="brand" placeholder="Brand / business name" />
+            <textarea name="message" rows="4" placeholder="Tell us what you're looking for..."></textarea>
+            <button type="submit" id="sbtn">Send message &rarr;</button>
+        </form>
+    </section>
+
+    <footer>
+        <span>© 2026 JaydenLewis Media</span>
+        <span>Stevenage, UK</span>
+    </footer>
+
+</div>
+
+<script>
+// ── LAVA LAMP METABALL ANIMATION ──
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Blob {
+    constructor() {
+        this.x  = Math.random() * canvas.width;
+        this.y  = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.ax = (Math.random() - 0.5) * 0.003;
+        this.ay = (Math.random() - 0.5) * 0.003;
+        this.r  = Math.random() * 140 + 80;
+    }
+    tick() {
+        this.vx += this.ax;
+        this.vy += this.ay;
+        const sp = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+        if (sp > 0.65) { this.vx *= 0.65 / sp; this.vy *= 0.65 / sp; }
+        this.x += this.vx;
+        this.y += this.vy;
+        const pad = this.r * 2;
+        if (this.x < -pad) this.x = canvas.width  + pad;
+        if (this.x > canvas.width  + pad) this.x = -pad;
+        if (this.y < -pad) this.y = canvas.height + pad;
+        if (this.y > canvas.height + pad) this.y = -pad;
+    }
+    draw() {
+        const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r);
+        g.addColorStop(0,    `rgba(255,255,255,1)`);
+        g.addColorStop(0.55, `rgba(255,255,255,1)`);
+        g.addColorStop(1,    `rgba(255,255,255,0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+const blobs = Array.from({ length: 11 }, () => new Blob());
+
+function frame() {
+    ctx.fillStyle = '#080808';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    blobs.forEach(b => { b.tick(); b.draw(); });
+    requestAnimationFrame(frame);
+}
+frame();
+
+// ── FADE IN ON SCROLL ──
+const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fi').forEach(el => io.observe(el));
+
+// ── CURSOR GLOW ──
+const glow = document.getElementById('cursor-glow');
+let mx = 0, my = 0, gx = 0, gy = 0;
+document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    glow.style.opacity = '1';
+});
+document.addEventListener('mouseleave', () => glow.style.opacity = '0');
+(function lerpGlow() {
+    gx += (mx - gx) * 0.08;
+    gy += (my - gy) * 0.08;
+    glow.style.left = gx + 'px';
+    glow.style.top  = gy + 'px';
+    requestAnimationFrame(lerpGlow);
+})();
+
+// ── MOUSE PARALLAX ON BLOBS ──
+let targetOffX = 0, targetOffY = 0, offX = 0, offY = 0;
+document.addEventListener('mousemove', e => {
+    targetOffX = (e.clientX / window.innerWidth  - 0.5) * 60;
+    targetOffY = (e.clientY / window.innerHeight - 0.5) * 60;
+});
+(function lerpParallax() {
+    offX += (targetOffX - offX) * 0.03;
+    offY += (targetOffY - offY) * 0.03;
+    blobs.forEach((b, i) => {
+        const strength = 0.5 + (i % 3) * 0.3;
+        b.ox = offX * strength;
+        b.oy = offY * strength;
+    });
+    requestAnimationFrame(lerpParallax);
+})();
+
+// patch blob draw to use offset
+const _origDraw = Blob.prototype.draw;
+Blob.prototype.draw = function() {
+    const ox = this.ox || 0, oy = this.oy || 0;
+    const g = ctx.createRadialGradient(this.x+ox, this.y+oy, 0, this.x+ox, this.y+oy, this.r);
+    g.addColorStop(0,    `rgba(255,255,255,1)`);
+    g.addColorStop(0.55, `rgba(255,255,255,1)`);
+    g.addColorStop(1,    `rgba(255,255,255,0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(this.x+ox, this.y+oy, this.r, 0, Math.PI * 2);
+    ctx.fill();
+};
+
+// ── COUNTER ANIMATION ──
+const counterObs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = +el.dataset.target;
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        if (target === 0) { el.textContent = prefix + '0' + suffix; return; }
+        let start = 0;
+        const dur = 1400;
+        const t0 = performance.now();
+        const tick = now => {
+            const p = Math.min((now - t0) / dur, 1);
+            const ease = 1 - Math.pow(1 - p, 3);
+            el.textContent = prefix + Math.round(ease * target) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        counterObs.unobserve(el);
+    });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat-n[data-target]').forEach(el => counterObs.observe(el));
+
+// ── SCROLL PROGRESS BAR ──
+const bar = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    bar.style.width = pct + '%';
+});
+
+// ── FORM SUBMIT ──
+async function handleSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('sbtn');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    try {
+        const res = await fetch('https://formspree.io/f/xkoeovqg', {
+            method: 'POST',
+            body: new FormData(e.target),
+            headers: { Accept: 'application/json' }
+        });
+        if (res.ok) {
+            btn.textContent = 'Sent ✓';
+            btn.style.background = '#4ade80';
+            e.target.reset();
+            setTimeout(() => {
+                btn.textContent = 'Send message →';
+                btn.style.background = '';
+                btn.disabled = false;
+            }, 3000);
+        } else {
+            btn.textContent = 'Something went wrong';
+            btn.disabled = false;
+        }
+    } catch {
+        btn.textContent = 'Something went wrong';
+        btn.disabled = false;
+    }
+}
+</script>
+
+</body>
+</html>
